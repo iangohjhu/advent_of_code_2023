@@ -26,6 +26,33 @@ max_blues = 14
 
 sum_possible_games = 0
 
+
+# function(s)
+
+def isPossible(subsets):
+
+    for set in subsets:
+        # print(set)
+        match_blues = re.search(r"(\d+) blue", set)
+        match_reds  = re.search(r"(\d+) red", set)
+        match_greens = re.search(r"(\d+) green", set)
+        
+        if match_blues:
+            # print("blues", match_blues.group(1))
+            if int(match_blues.group(1)) > max_blues:
+                return False
+        if match_reds:
+            # print("reds", match_reds.group(1))
+            if int(match_reds.group(1)) > max_reds:
+                return False
+        if match_greens:
+            # print("greens", match_greens.group(1))
+            if int(match_greens.group(1)) > max_greens:
+                return False
+
+    # if we get this far, subsets were possible
+    return True
+
 # process list
 for line in list:
     m = re.split(r":", line)
@@ -34,31 +61,12 @@ for line in list:
     g = re.search(r"Game (\d+)", m[0])
     gameId = int(g.group(1))
     # m[1] = the subsets of cubes shown
-    s = re.split(r";", m[1].strip())
+    subsets = re.split(r";", m[1].strip())
     
     # print("Game", gameId)
     # game is possible until proven impossible
-    isPossible = True
 
-    for set in s:
-        # print(set)
-        match_blues = re.search(r"(\d+) blue", set)
-        match_reds  = re.search(r"(\d+) red", set)
-        match_greens = re.search(r"(\d+) green", set)
-        if match_blues:
-            # print("blues", match_blues.group(1))
-            if int(match_blues.group(1)) > max_blues:
-                isPossible=False
-        if match_reds:
-            # print("reds", match_reds.group(1))
-            if int(match_reds.group(1)) > max_reds:
-                isPossible=False
-        if match_greens:
-            # print("greens", match_greens.group(1))
-            if int(match_greens.group(1)) > max_greens:
-                isPossible=False
-
-    if isPossible:
+    if isPossible(subsets):
         print("Game", gameId, "is possible")
         sum_possible_games += gameId
     else:
