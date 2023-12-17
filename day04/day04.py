@@ -49,7 +49,8 @@ def readCard(line):
 totalCardPoints = 0
 
 # process list
-for line in list:
+for i in range(last_line):
+    line = list[i]
     totalCardPoints += readCard(line)
 
 # output
