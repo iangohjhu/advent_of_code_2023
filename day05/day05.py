@@ -21,19 +21,24 @@ file.close()
 
 # init
 seedsList = []
+mapsList  = []
 mapsTuple = ('seed-to-soil map:', 'soil-to-fertilizer map:', 'fertilizer-to-water map:', 'water-to-light map:', 'light-to-temperature map:', 'temperature-to-humidity map:', 'humidity-to-location map:')
 indexSection = -1
-mapsLookup = []
 
 # classes
 
 class seedClass:
     def __init__ (self, number):
         self.number = number
-        self.data = []
+        self.data   = []
 
     def add(self, map, value):
         self.data.append([map, value])        
+
+class mapClass:
+    def __init__ (self, i, m):
+        self.index = i
+        self.map   = m
         
 # function(s) 
 
@@ -59,13 +64,6 @@ def lookupSeed(mapsLookup, seedValue):
             # print(seedValue,"in", map[0], map[1], map[2], "maps to", lookup)
     return lookup
 
-def mapSeeds(index, mapsLookup, seedsList):
-    # Each line within a map contains three numbers: the destination range start, the source range start, and the range length.
-    for s in seedsList:
-        v = lookupSeed(mapsLookup, s.number)
-        s.add(index, v)
-        s.number = v
-
 def displaySeeds(seedsList):
     lowest = 0
     lowestLocation = -1
@@ -86,6 +84,8 @@ def displaySeeds(seedsList):
     print("lowest location number", lowestLocation)
                     
 # process list
+mapsLookup = []
+ 
 for i in range(last_line):
     line = list[i].strip()
     m = re.match(r"seeds:\s+", line)
@@ -94,16 +94,29 @@ for i in range(last_line):
             newSeed = seedClass(int(s))
             seedsList.append(newSeed)
     newIndex = parseListSection(line)
-    if (indexSection < newIndex) or (i == last_line -1):
-        # do seed mapping before we move on?
-        mapSeeds(indexSection, mapsLookup, seedsList)
-        # in a new section
-        indexSection = newIndex
-        mapsLookup = []
+
     m = re.match(r"^[\d]+ [\d]+ [\d]+", line)
     if m and indexSection > -1:
         # print(mapsTuple[indexSection], m[0])
         mapsLookup.append(re.split(r"\s+", line))
+
+    if (indexSection < newIndex) or (i == last_line -1):
+        # store seed map before we move on
+        # mapSeeds(indexSection, mapsLookup, seedsList)
+        newMap = mapClass(indexSection, mapsLookup)
+        mapsList.append(newMap)        
+        # in a new section
+        indexSection = newIndex
+        mapsLookup = []
+
+# process seeds
+for s in seedsList:
+    
+    for m in mapsList:
+        # print(m.index, m.map)
+        v = lookupSeed(m.map, s.number)
+        s.add(m.index, v)
+        s.number = v
 
 # output
 displaySeeds(seedsList)
