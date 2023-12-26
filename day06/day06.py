@@ -1,8 +1,8 @@
 # https://docs.python.org/3/library/re.html
 import re
 
-#input_file = "sample_input.txt"
-input_file = "puzzle_input.txt"
+input_file = "sample_input2.txt"
+input_file = "puzzle_input2.txt"
 
 # open files in read mode
 file = open(input_file, 'r')
